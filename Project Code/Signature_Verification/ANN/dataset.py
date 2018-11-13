@@ -22,7 +22,7 @@ def getFeatures(path, img=None, display=False):
     eccentricity, solidity = features.EccentricitySolidity(img)
     skewness, kurtosis = features.SkewKurtosis(img)
     # print("(svm)")
-    aspect_ratio, bounding_rect_area, hull_area, contour_area=features.get_contour_features(img,path,display=display)
+    aspect_ratio, bounding_rect_area, hull_area, contour_area=features.get_contour_features(img,display=display)
     retVal = (ratio, centroid, eccentricity, solidity, skewness, kurtosis, aspect_ratio, hull_area/bounding_rect_area, contour_area/bounding_rect_area)
     return retVal
 
@@ -47,7 +47,7 @@ def makeCSV():
     gpath = 'data/valid/'
     # forged signatures path
     fpath = 'data/invalid/'
-    for person in range(1, 12):
+    for person in range(1, 30):
         per = ('00'+str(person))[-3:]
         print('Saving features for person id-',per)
         

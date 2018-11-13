@@ -20,8 +20,8 @@ forged_image_filenames = listdir("data/forged")
 genuine_image_paths = "data/genuine"
 forged_image_paths = "data/forged"
 
-genuine_image_features = [[] for x in range(11)]
-forged_image_features = [[] for x in range(11)]
+genuine_image_features = [[] for x in range(29)]
+forged_image_features = [[] for x in range(29)]
 
 for name in genuine_image_filenames:
     signature_id = int(name.split('_')[0][-3:])
@@ -74,7 +74,7 @@ wrong = 0
 
 im_contour_features = []
 
-for i in range(11):
+for i in range(29):
     # print(genuine_image_features[i])
     des_list = []
     for im in genuine_image_features[i]:
@@ -98,7 +98,7 @@ for i in range(11):
         (im['skewness_0'],im['skewness_1']),(im['kurtosis_0'],im['kurtosis_1']) = features.SkewKurtosis(preprocessed_image.copy())
         
         # im_contour_features.append([hash, aspect_ratio, convex_hull_area / bounding_rect_area, contours_area / bounding_rect_area])
-        im_contour_features.append([hash, aspect_ratio, convex_hull_area / bounding_rect_area, contours_area / bounding_rect_area, im['ratio'],im['centroid_0'],im['centroid_1'],im['eccentricity'],im['solidity'],im['skewness_0'],im['skewness_1'],im['kurtosis_0'],im['kurtosis_1']])
+        im_contour_features.append([aspect_ratio, convex_hull_area / bounding_rect_area, contours_area / bounding_rect_area, im['ratio'],im['centroid_0'],im['centroid_1'],im['eccentricity'],im['solidity'],im['skewness_0'],im['skewness_1'],im['kurtosis_0'],im['kurtosis_1']])
 
         des_list.append(sift(preprocessed_image.copy(), image_path))
         # print(len(des_list))
@@ -125,7 +125,7 @@ for i in range(11):
         (im['skewness_0'],im['skewness_1']),(im['kurtosis_0'],im['kurtosis_1']) = features.SkewKurtosis(preprocessed_image.copy())
         
         # im_contour_features.append([hash, aspect_ratio, convex_hull_area / bounding_rect_area, contours_area / bounding_rect_area])
-        im_contour_features.append([hash, aspect_ratio, convex_hull_area / bounding_rect_area, contours_area / bounding_rect_area,im['ratio'],im['centroid_0'],im['centroid_1'],im['eccentricity'],im['solidity'],im['skewness_0'],im['skewness_1'],im['kurtosis_0'],im['kurtosis_1']])
+        im_contour_features.append([aspect_ratio, convex_hull_area / bounding_rect_area, contours_area / bounding_rect_area,im['ratio'],im['centroid_0'],im['centroid_1'],im['eccentricity'],im['solidity'],im['skewness_0'],im['skewness_1'],im['kurtosis_0'],im['kurtosis_1']])
 
         des_list.append(sift(preprocessed_image.copy(), image_path))
 
@@ -142,13 +142,13 @@ for i in range(11):
     voc, variance = kmeans(descriptors, k, 1)
 
     # Calculate the histogram of features
-    im_features = np.zeros((len(genuine_image_features[i]) + len(forged_image_features[i]), k+13), "float32")
+    im_features = np.zeros((len(genuine_image_features[i]) + len(forged_image_features[i]), k+12), "float32")
     for ii in range(len(genuine_image_features[i]) + len(forged_image_features[i])):
         words, distance = vq(des_list[ii][1], voc)
         for w in words:
             im_features[ii][w] += 1
 
-        for j in range(13):
+        for j in range(12):
             im_features[ii][k+j] = im_contour_features[ii][j]
 
     #nbr_occurences = np.sum((im_features > 0) * 1, axis=0)

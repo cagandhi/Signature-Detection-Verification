@@ -3,8 +3,8 @@ import features
 import os
 import dataset
 
-def testing(path):
-    feature = dataset.getCSVFeatures(path)
+def testing(path,display=False):
+    feature = dataset.getCSVFeatures(path,display=display)
     if not(os.path.exists('data/TestFeatures')):
         os.mkdir('data/TestFeatures')
     with open('data/TestFeatures/testcsv.csv', 'w') as handle:

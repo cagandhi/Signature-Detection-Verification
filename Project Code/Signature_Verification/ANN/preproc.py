@@ -49,6 +49,10 @@ def preproc(path, img=None, display=True):
     if display:
         plt.imshow(signimg, cmap = matplotlib.cm.Greys_r)
         plt.show()
+
+    signimg=255*signimg
+    signimg=signimg.astype('uint8')
+    
     return signimg
 
 #print(os.path.exists('data/valid/001001_000.png'))

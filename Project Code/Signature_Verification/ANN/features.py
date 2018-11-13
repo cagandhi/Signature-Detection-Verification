@@ -14,17 +14,19 @@ def Ratio(img):
     a = 0
     for row in range(len(img)):
         for col in range(len(img[0])):
-            if img[row][col]==True:
+            if img[row][col]==255:
                 a = a+1
     total = img.shape[0] * img.shape[1]
     return a/total
 
 def Centroid(img):
+    # print("cent")
+    # print(img)
     numOfWhites = 0
     a = np.array([0,0])
     for row in range(len(img)):
         for col in range(len(img[0])):
-            if img[row][col]==True:
+            if img[row][col]==255:
                 b = np.array([row,col])
                 a = np.add(a,b)
                 numOfWhites += 1
@@ -34,7 +36,7 @@ def Centroid(img):
     return centroid[0], centroid[1]
 
 def EccentricitySolidity(img):
-    r = regionprops(img.astype("int8"))
+    r = regionprops(img)
     return r[0].eccentricity, r[0].solidity
 
 def SkewKurtosis(img):
@@ -68,36 +70,13 @@ def SkewKurtosis(img):
 
     return (skewx , skewy), (kurtx, kurty)
 
-def preprocess_image(path, display=False):
-    raw_image = cv2.imread(path)
-    bw_image = cv2.cvtColor(raw_image, cv2.COLOR_BGR2GRAY)
-    bw_image = 255 - bw_image
-
-    if display:
-        cv2.imshow("RGB to Gray", bw_image)
-        cv2.waitKey()
-
-    _, threshold_image = cv2.threshold(bw_image, 127, 255,cv2.THRESH_BINARY)
-
-    if display:
-        cv2.imshow("Threshold", threshold_image)
-        cv2.waitKey()
-
-    return threshold_image
-
-def get_contour_features(im,impath, display=False):
+def get_contour_features(im, display=False):
     '''
-    :param im: input preprocessed image
+    :param im: input preprocessed image | from function in prepoc.py | done in run.py
     :param display: flag - if true display images
     :return:aspect ratio of bounding rectangle, area of : bounding rectangle, contours and convex hull
     '''
-    # im=preprocess_image(impath,display)
-    im=255*im
-    im=im.astype('uint8')
-    # print(im)
 
-    # print(im.shape)
-    # print(im.dtype)
     rect = cv2.minAreaRect(cv2.findNonZero(im))
     box = cv2.boxPoints(rect)
     box = np.int0(box)
@@ -117,14 +96,14 @@ def get_contour_features(im,impath, display=False):
 
     if display:
         convex_hull_image = cv2.drawContours(im.copy(), [hull], 0, (120, 120, 120), 2)
-        cv2.imshow("b", cv2.resize(convex_hull_image, (0, 0), fx=2.5, fy=2.5))
+        cv2.imshow("a", cv2.resize(convex_hull_image, (0, 0), fx=2.5, fy=2.5))
         cv2.waitKey()
 
     im2, contours, hierarchy = cv2.findContours(im.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     if display:
         contour_image = cv2.drawContours(im.copy(), contours, -1, (120, 120, 120), 3)
-        cv2.imshow("c", cv2.resize(contour_image, (0, 0), fx=2.5, fy=2.5))
+        cv2.imshow("a", cv2.resize(contour_image, (0, 0), fx=2.5, fy=2.5))
         cv2.waitKey()
 
     contour_area = 0
@@ -133,7 +112,3 @@ def get_contour_features(im,impath, display=False):
     hull_area = cv2.contourArea(hull)
 
     return aspect_ratio, bounding_rect_area, hull_area, contour_area
-
-if __name__ == "__main__":
-    path = input("Enter path : ")
-    preprocess_image(path,display=True)

@@ -4,12 +4,12 @@ import numpy as np
 from time import time
 import test
 
-n_input = 12
+n_input = 12    #no of features
 train_person_id = input("Enter person's id : ")
 # test_image_path = input("Enter path of signature image : ")
 
 train_path = 'data/Features/Training/training_'+train_person_id+'.csv'
-# test.testing(test_image_path)
+# test.testing(test_image_path,True)
 # test_path = 'data/TestFeatures/testcsv.csv'
 test_path = 'data/Features/Testing/testing_'+train_person_id+'.csv'
 
@@ -128,7 +128,7 @@ def evaluate(train_path, test_path, type2=False):
 
 
 def trainAndTest(rate=0.001, epochs=1700, neurons=7, display=False):    
-    print('aya pochya')
+    # print('aya pochya')
     start = time()
     
     # Parameters
@@ -142,7 +142,7 @@ def trainAndTest(rate=0.001, epochs=1700, neurons=7, display=False):
     # n_hidden_3 = 30 # 3rd layer
 
     train_avg, test_avg = 0, 0
-    n = 11
+    n = 29
     # flag=[True] * 5000
     for i in range(1,n+1):
         # flag.append(True);
@@ -158,6 +158,7 @@ def trainAndTest(rate=0.001, epochs=1700, neurons=7, display=False):
         test_avg += test_score
     if display:
 #         print("Number of neurons in Hidden layer-", n_hidden_1)
+        print('ANN Accuracy')
         print("Training average-", train_avg/n)
         print("Testing average-", test_avg/n)
         print("Time taken-", time()-start)
@@ -165,6 +166,6 @@ def trainAndTest(rate=0.001, epochs=1700, neurons=7, display=False):
 
 
 trainAndTest(display=True)
-#print(test_path)
+# print(test_path)
 # evaluate(train_path, test_path,type2=True)
-print('pati gayu')
+# print('pati gayu')
