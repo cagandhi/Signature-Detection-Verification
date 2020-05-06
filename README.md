@@ -1,5 +1,5 @@
 # Signature-detection-verification
-A conceptual model to detect and verify signatures on bank cheques. This was my project in the "Computer Vision" course at Ahmedabad University.
+A conceptual model to detect and verify signatures on bank cheques. This was my project in the "CSP 502: Computer Vision" course at Ahmedabad University.
 
 We devised an OCR based approach to localize signatures along with Connected Components, Linesweep algorithm & geometric features with Support Vector Machine (SVM), Artificial Neural Networks (ANN) classification to verify the authenticity of signatures with a 91% hit rate.
 
