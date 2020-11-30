@@ -1,32 +1,31 @@
-from PIL import Image, ImageDraw, ImageOps
+from PIL import Image
 
-import operator
 import os
-import sys
-import math, random
 import numpy as np
-import pandas as pd
 import cv2
-import matplotlib.pyplot as plt
-import scipy.misc as smsc
+
 from itertools import product
 from ufarray import *
 
-def main():
 
-    # Open the image
-    files = [f for f in os.listdir('.') if os.path.isfile(f)]
-    
-    for filename in files:
-        fileSize = os.stat(filename).st_size
-        
-        if ".jpg" in filename and "Cropped" in filename and fileSize != 0:
+def main():
+    images_dir = "cheque_images"
+    input_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), images_dir
+    )
+
+    for filename in os.listdir(input_path):
+        fileSize = os.stat(os.path.join(input_path, filename)).st_size
+
+        if fileSize != 0:
             print(filename)
-            img = Image.open(filename)
+            img = Image.open(os.path.join(input_path,filename))
             temp = np.array(img)
 
             grayscale = img.convert("L")
-            xtra, thresh = cv2.threshold(np.array(grayscale), 128, 255, cv2.THRESH_BINARY_INV)
+            xtra, thresh = cv2.threshold(
+                np.array(grayscale), 128, 255, cv2.THRESH_BINARY_INV
+            )
 
             # thresh = cv2.medianBlur(thresh, 2)
 
@@ -36,9 +35,9 @@ def main():
             flagx = 0
             indexStartX = 0
             indexEndX = 0
-            
+
             for i in range(rows):
-                line = thresh[i,:]
+                line = thresh[i, :]
 
                 if flagx == 0:
                     ele = [255]
@@ -48,7 +47,7 @@ def main():
                         indexStartX = i
                         flagx = 1
                         # print('start x: ', indexStartX, flagx)
-                
+
                 elif flagx == 1:
                     ele = [255]
                     mask = np.isin(ele, line)
@@ -62,13 +61,13 @@ def main():
                         # print('elif x: ', indexStartX, flagx)
                     else:
                         break
-            
+
             flagy = 0
             indexStartY = 0
             indexEndY = 0
-            
+
             for j in range(cols):
-                line = thresh[indexStartX:indexEndX,j:j+20]
+                line = thresh[indexStartX:indexEndX, j : j + 20]
 
                 if flagy == 0:
                     ele = [255]
@@ -78,7 +77,7 @@ def main():
                         indexStartY = j
                         flagy = 1
                         # print('start y: ', indexStartY, flagy)
-                
+
                 elif flagy == 1:
                     ele = [255]
                     mask = np.isin(ele, line)
@@ -94,20 +93,50 @@ def main():
                         break
 
             # print(indexStartX, indexEndX, indexStartY, indexEndY)
-            cv2.line(thresh, (indexStartY,indexStartX), (indexEndY,indexStartX), (255,0,0), 1)
-            cv2.line(thresh, (indexStartY,indexEndX), (indexEndY,indexEndX), (255,0,0), 1)
+            cv2.line(
+                thresh,
+                (indexStartY, indexStartX),
+                (indexEndY, indexStartX),
+                (255, 0, 0),
+                1,
+            )
+            cv2.line(
+                thresh,
+                (indexStartY, indexEndX),
+                (indexEndY, indexEndX),
+                (255, 0, 0),
+                1,
+            )
 
-            cv2.line(thresh, (indexStartY,indexStartX), (indexStartY,indexEndX), (255,0,0), 1)
-            cv2.line(thresh, (indexEndY,indexStartX), (indexEndY,indexEndX), (255,0,0), 1)
+            cv2.line(
+                thresh,
+                (indexStartY, indexStartX),
+                (indexStartY, indexEndX),
+                (255, 0, 0),
+                1,
+            )
+            cv2.line(
+                thresh,
+                (indexEndY, indexStartX),
+                (indexEndY, indexEndX),
+                (255, 0, 0),
+                1,
+            )
 
-            temp_np = temp[indexStartX:indexEndX+1, indexStartY:indexEndY+1]
-            path = '/Users/miteshgandhi/Documents/my_project/cclabel/sigCrop'
+            temp_np = temp[
+                indexStartX : indexEndX + 1, indexStartY : indexEndY + 1
+            ]
 
-            s1 = 'Result_' + filename
+            path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sigCrop")
+            if not os.path.exists(path):
+                os.makedirs(path)
+
+            s1 = "Result_" + filename
             cv2.imwrite(os.path.join(path, s1), temp_np)
 
             # cv2.imshow('2', cv2.resize(thresh, (600, 600)))
             # cv2.waitKey(0)
 
-if __name__ == "__main__": 
-	main()
+
+if __name__ == "__main__":
+    main()

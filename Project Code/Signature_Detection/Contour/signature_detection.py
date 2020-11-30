@@ -9,6 +9,7 @@ import cv2
 from matplotlib import pyplot as plt
 from matplotlib import image as image
 
+
 class Rect:
     def __init__(self, x = 0, y = 0, w = 0, h = 0):
         self.x = x
@@ -42,8 +43,7 @@ class Rect:
             self.h = imgSize[1] - self.y
 
 
-
-signature = cv2.imread('083656.jpg')
+signature = cv2.imread('Cheque_083654.tif')
 cv2.imshow('Original',signature)
 signature = cv2.resize(signature, (0,0), fx=2, fy=2)
 
@@ -57,7 +57,7 @@ def getPageFromImage(img):
     threshold, _ = cv2.threshold(src = bImg, thresh = 0, maxval = 255, type = cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     cannyImg = cv2.Canny(image = bImg, threshold1 = 0.5 * threshold, threshold2 = threshold)
 
-    _, contours, _ = cv2.findContours(image = cannyImg.copy(), mode = cv2.RETR_TREE, method = cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(image = cannyImg.copy(), mode = cv2.RETR_TREE, method = cv2.CHAIN_APPROX_SIMPLE)
 
     # There is no page in the image
     if len(contours) == 0:
@@ -94,37 +94,16 @@ def getPageFromImage(img):
     return img[maxRect.y : maxRect.y + maxRect.h, maxRect.x : maxRect.x + maxRect.w]
 
 
-
 def getSignatureFromPage(img):
     imgSize = np.shape(img)
     img = cv2.resize(img,(2000,2000))
 
     gImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
-#    gImg = cv2.GaussianBlur(gImg, (7, 7), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-#    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
-    
-    
-#    gImg = cv2.medianBlur(src = gImg, ksize=5)
-    
 
-    
+    gImg = cv2.GaussianBlur(gImg, (5, 5), 0)
+
+#    gImg = cv2.medianBlur(src = gImg, ksize=5)
+
     threshold, _ = cv2.threshold(src = gImg, thresh = 0, maxval = 255, type = cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     cannyImg = cv2.Canny(image = gImg, threshold1 = 0.5 * threshold, threshold2 = threshold)
 
@@ -136,10 +115,9 @@ def getSignatureFromPage(img):
     cv2.imshow('cannyImg',cv2.resize(cannyImg, (0,0), fx=0.4, fy=0.4))
 
     # findContours is a distructive function so the image pased is only a copy
-    _, contours, _ = cv2.findContours(image = cannyImg.copy(), mode = cv2.RETR_TREE, method = cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(image = cannyImg.copy(), mode = cv2.RETR_TREE, method = cv2.CHAIN_APPROX_SIMPLE)
 
     contImg=cv2.drawContours(img, contours,-1,(0,255,0),3);
-#    scontImg = cv2.resize(contImg, (0,0), fx=0.5, fy=0.5) 
     cv2.imshow('ContImg',cv2.resize(contImg, (0,0), fx=0.4, fy=0.4))
     cv2.startWindowThread()
 
@@ -148,8 +126,8 @@ def getSignatureFromPage(img):
     for contour in contours:
         epsilon = cv2.arcLength(contour, True)
         corners = cv2.approxPolyDP(contour, 0.01 * epsilon, True)
-        x, y, w, h = cv2.boundingRect(points = contour)
-        
+        x, y, w, h = cv2.boundingRect(contour)
+
         if len(corners) > maxCorners:
             maxCorners = len(corners)
             maxRect.set(x, y, w, h)
@@ -163,27 +141,6 @@ def getSignature(img):
     imgSize = np.shape(img)
 
     gImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    # minBlockSize = 3
-    # maxBlockSize = 101
-    # minC = 3
-    # maxC = 101
-    #
-    # bestContourNo = 1000000
-    # bestBlockSize = 0
-    # bestC = 0
-    #
-    # for c in range(minC, maxC, 2):
-    #     for bs in range(minBlockSize, maxBlockSize, 2):
-    #         mask = cv2.adaptiveThreshold(gImg, maxValue = 255, adaptiveMethod = cv2.ADAPTIVE_THRESH_MEAN_C, thresholdType = cv2.THRESH_BINARY, blockSize = bs, C = c)
-    #         rmask = cv2.bitwise_not(mask)
-    #         _, contours, _ = cv2.findContours(image = rmask.copy(), mode = cv2.RETR_TREE, method = cv2.CHAIN_APPROX_SIMPLE)
-    #         if len(contours) > 15 and len(contours) < bestContourNo:
-    #             bestContourNo = len(contours)
-    #             bestBlockSize = bs
-    #             bestC = c
-
-    # blockSize = 21, C = 10
 
     # TODO throw error if blockSize is bigger than image
     blockSize = 50
