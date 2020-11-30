@@ -16,7 +16,6 @@ Signature_verification folder contains codes for SVM and ANN classification.
 * Connected Components approach - run `python cclabel.py`<br>
 * LineSweep algorithm, run `python lineSweepDetect.py`<br>
 * Contour feature based algorithm, run `python signature_detection.py`
-
-For execution of signature verification approaches,<br>
+3. For execution of signature verification approaches,<br>
 * For SVM based classification, run `python run.py` <br>
 * For ANN based classification, run `python test.py`
